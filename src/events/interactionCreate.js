@@ -1,0 +1,21 @@
+module.exports = {
+    name: 'interactionCreate',
+    async execute(interaction, client) {
+        if (!interaction.isChatInputCommand()) return;
+
+        const command = client.commands.get(interaction.commandName);
+        if (!command) return;
+
+        try {
+            await command.execute(interaction, client);
+        } catch (error) {
+            console.error('Slash command error:', error);
+
+            if (interaction.deferred || interaction.replied) {
+                await interaction.followUp({ content: 'Terjadi error saat menjalankan command!', ephemeral: true });
+            } else {
+                await interaction.reply({ content: 'Terjadi error saat menjalankan command!', ephemeral: true });
+            }
+        }
+    }
+};
