@@ -36,12 +36,7 @@ The bot uses a **Command Handler + Event Handler** architecture.
         │   │   └── rolesetup.js
         │   │
         │   ├── moderation/
-        │   │   └── ...
-        │   │
-        │   └── stickers/
-        │       ├── addsticker.js
-        │       └── delsticker.js
-        │
+        │       └── ...
         └── events/
             ├── ready.js
             ├── interactionCreate.js
