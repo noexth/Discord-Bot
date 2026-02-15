@@ -10,7 +10,6 @@ community management, RPG roles, automation, and server utilities.
 -   Modular Slash Command Handler
 -   Welcome Message (Embed)
 -   Reaction Role Panel
--   Sticker Manager (Upload & Delete)
 -   Scalable Event Handler System
 -   Environment Configuration (.env)
 -   Per‑guild command deployment
