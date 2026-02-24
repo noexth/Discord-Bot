@@ -1,11 +1,11 @@
 const { Events } = require('discord.js');
 
-const TARGET_CHANNEL_ID = '1467969230656770131'; // Replace with your channel ID
+const TARGET_CHANNEL_IDS = ['1475865706703622264', '1475865597907701996', '1475865631441027082']; // Replace with your channel IDs
 
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
-        if (message.channel.id !== TARGET_CHANNEL_ID || message.author.bot) {
+        if (!TARGET_CHANNEL_IDS.includes(message.channel.id) || message.author.bot) {
             return;
         }
 

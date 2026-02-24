@@ -1,6 +1,6 @@
 const { Events } = require('discord.js');
 
-const TARGET_CHANNEL_ID = '1467969230656770131'; // Replace with your contest channel ID
+const TARGET_CHANNEL_IDS = ['1475865706703622264', '1475865597907701996', '1475865631441027082']; // Replace with your contest channel IDs
 
 module.exports = {
     name: Events.MessageReactionAdd,
@@ -17,7 +17,7 @@ module.exports = {
         if (user.bot) return;
 
         // Vote Limiting Logic
-        if (reaction.message.channel.id === TARGET_CHANNEL_ID) {
+        if (TARGET_CHANNEL_IDS.includes(reaction.message.channel.id)) {
             const channel = reaction.message.channel;
             const reactingUser = await user.fetch();
 
