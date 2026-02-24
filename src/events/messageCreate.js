@@ -152,7 +152,7 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setTitle(isUpdate ? 'Updated Anonymous Submission' : 'New Anonymous Submission')
-                .setImage(image.url)
+                .setImage(image.proxy_url)
                 .setColor(isUpdate ? '#ffa500' : '#0099ff')
                 .setTimestamp();
 
