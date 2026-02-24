@@ -1,6 +1,6 @@
 const { Events } = require('discord.js');
 
-const TARGET_CHANNEL_ID = 'YOUR_CHANNEL_ID_HERE'; // Replace with your contest channel ID
+const TARGET_CHANNEL_ID = '1467969230656770131'; // Replace with your contest channel ID
 
 module.exports = {
     name: Events.MessageReactionAdd,
