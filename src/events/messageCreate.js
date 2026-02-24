@@ -2,7 +2,7 @@ const { Events, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
-const TARGET_CHANNEL_IDS = ['1475885543475777768', '1475865631441027082', '1475865597907701996']; // Replace with your channel IDs
+const TARGET_CHANNEL_IDS = ['1475885543475777768', '1475865631441027082', '1475865597907701996', '1475910321637036032']; // Replace with your channel IDs
 const SUBMISSIONS_DB_PATH = path.join(__dirname, '..', '..', 'submitted-users.json');
 
 // Load submissions map from the JSON file on startup.
