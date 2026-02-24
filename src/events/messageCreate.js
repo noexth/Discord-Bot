@@ -150,14 +150,16 @@ module.exports = {
                 }
             }
 
-            const imageUrl = image.proxy_url || image.url;
             const embed = new EmbedBuilder()
                 .setTitle(isUpdate ? 'Updated Anonymous Submission' : 'New Anonymous Submission')
-                .setImage(imageUrl)
                 .setColor(isUpdate ? '#ffa500' : '#0099ff')
-                .setTimestamp();
+                .setTimestamp()
+                .setFooter({ text: 'The image is attached directly to this message for maximum quality.' });
 
-            const newMessage = await message.channel.send({ embeds: [embed] });
+            const newMessage = await message.channel.send({
+                embeds: [embed],
+                files: [image]
+            });
             await newMessage.react('❤️');
 
             // Update the map for the channel and save to file
