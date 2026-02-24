@@ -22,9 +22,65 @@ try {
 }
 
 // A helper function to check if an attachment is an image
-const isImage = (attachment) => {
-    const contentType = attachment.contentType;
-    return contentType && contentType.startsWith('image/');
+const isImage = async (attachment) => {
+    // While contentType can be spoofed, it's a quick first check.
+    if (attachment.contentType && !attachment.contentType.startsWith('image/')) {
+        return false;
+    }
+
+    try {
+        const response = await fetch(attachment.url);
+        if (!response.ok) {
+            console.error(`[Magic Number Check] Failed to fetch attachment: ${response.statusText}`);
+            return false;
+        }
+
+        // Read just enough bytes for validation
+        const buffer = await response.arrayBuffer();
+        const view = new DataView(buffer);
+        
+        if (view.byteLength < 12) {
+             return false; // Not enough data to check
+        }
+
+        // Explicitly block common non-image files by checking their magic numbers.
+        // Check for PDF: %PDF (hex: 25 50 44 46)
+        if (view.getUint32(0) === 0x25504446) {
+            return false;
+        }
+        // Check for ZIP archives: PK (hex: 50 4B)
+        if (view.getUint16(0) === 0x504B) {
+            return false;
+        }
+
+        // Now, proceed with the allow-list check for valid image signatures.
+        // Check for PNG: 89 50 4E 47 0D 0A 1A 0A
+        if (view.getUint32(0) === 0x89504E47 && view.getUint32(4) === 0x0D0A1A0A) {
+            return true;
+        }
+
+        // Check for JPEG: FF D8 FF
+        if (view.getUint16(0) === 0xFFD8) {
+            return true;
+        }
+
+        // Check for GIF: 47 49 46 38 ("GIF8")
+        if (view.getUint32(0) === 0x47494638) {
+            return true;
+        }
+
+        // Check for WebP: 52 49 46 46 ... 57 45 42 50 ("RIFF" ... "WEBP")
+        if (view.getUint32(0) === 0x52494646 && view.getUint32(8) === 0x57454250) {
+            return true;
+        }
+        
+        // If no signature matched
+        return false;
+
+    } catch (error) {
+        console.error('[Magic Number Check] Error during validation:', error);
+        return false;
+    }
 };
 
 // Helper function to save the nested map to the JSON file
@@ -123,7 +179,7 @@ module.exports = {
         const channelSubmissions = submissions.get(channelId);
 
         const attachments = message.attachments;
-        if (attachments.size !== 1 || !isImage(attachments.first())) {
+        if (attachments.size !== 1 || !(await isImage(attachments.first()))) {
             try {
                 // The original message is invalid, so we delete it before telling the user.
                 await message.delete();
