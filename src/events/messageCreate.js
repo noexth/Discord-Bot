@@ -122,19 +122,15 @@ module.exports = {
         }
         const channelSubmissions = submissions.get(channelId);
 
-        try {
-            await message.delete();
-        } catch (error) {
-            console.error('Failed to delete submission message:', error);
-            return;
-        }
-
         const attachments = message.attachments;
         if (attachments.size !== 1 || !isImage(attachments.first())) {
             try {
+                // The original message is invalid, so we delete it before telling the user.
+                await message.delete();
                 await message.author.send('Your submission was invalid. Please submit a single image file.');
-            } catch (dmError) {
-                console.error(`Could not send DM to ${message.author.tag}.`, dmError);
+            } catch (error) {
+                // If we can't delete or DM, just log it. The main thing is to not process it.
+                console.error(`Error handling invalid submission by ${message.author.tag}:`, error);
             }
             return;
         }
@@ -166,6 +162,9 @@ module.exports = {
             // Update the map for the channel and save to file
             channelSubmissions.set(userId, newMessage.id);
             saveSubmissions();
+
+            // Now that the new message is posted, delete the original user message
+            await message.delete();
 
             try {
                 const dmText = isUpdate 
