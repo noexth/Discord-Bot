@@ -20,15 +20,27 @@ module.exports = {
         if (TARGET_CHANNEL_IDS.includes(reaction.message.channel.id)) {
             const channel = reaction.message.channel;
             const reactingUser = await user.fetch();
+            const ALLOWED_EMOJI = '❤️';
+
+            // If the reaction is not the allowed one, remove it and stop.
+            if (reaction.emoji.name !== ALLOWED_EMOJI) {
+                try {
+                    await reaction.users.remove(reactingUser.id);
+                } catch (error) {
+                    console.error('Failed to remove non-allowed reaction:', error);
+                }
+                return;
+            }
 
             try {
-                const messages = await channel.messages.fetch();
+                const messages = await channel.messages.fetch({ limit: 100 });
                 let userReactionCount = 0;
 
                 for (const message of messages.values()) {
-                    const reactions = message.reactions.cache;
-                    for (const r of reactions.values()) {
-                        const users = await r.users.fetch();
+                    // We only care about the allowed emoji for counting votes
+                    const specificReaction = message.reactions.cache.get(ALLOWED_EMOJI);
+                    if (specificReaction) {
+                        const users = await specificReaction.users.fetch();
                         if (users.has(reactingUser.id)) {
                             userReactionCount++;
                         }
